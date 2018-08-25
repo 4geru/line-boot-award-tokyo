@@ -6,6 +6,8 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const clova = require('./clova'); 
+const intro = require('./intro');
+const items = require('./items');
 const PORT = process.env.PORT || 5000;
 
 const config = {
@@ -24,8 +26,21 @@ app.post('/webhook', line.middleware(config), (req, res) => {
 
 const client = new line.Client(config);
 
+// server起動後にメッセージを投げる
+// response = client.pushMessage('user_id',
+//   {
+//       type: 'text',
+//       text: 'hello'
+//     }
+// );
 
 function handleEvent(event) {
+  console.log(event.type)
+  if (event.type === 'join' || event.type === 'follow') {
+    return client.pushMessage(event.source.userId,
+      intro.intro
+      );
+  }
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
   }

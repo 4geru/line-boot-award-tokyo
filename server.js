@@ -6,6 +6,7 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const clova = require('./clova'); 
+const pay = require('./line-pay'); 
 const PORT = process.env.PORT || 5000;
 
 const config = {
@@ -41,5 +42,15 @@ console.log(clova)
 
 app.post('/clova', clova.clovaMiddleware, clova.clovaSkillHandler);
 
+// htmlをうまく見せる系
+app.use(express.static(__dirname + "/public"));
+app.set("view engine", "ejs");
+app.get("/", (req, res) => { res.render(__dirname + "/index"); })
+
+// line paynのやつ
+app.use("/pay/confirm", (req, res) => {pay.confirm(req, res)});
+app.use("/pay/reserve", (req, res) => {pay.serve(req, res)});
+
+// start server
 app.listen(PORT);
 console.log(`Server running at ${PORT}`);

@@ -13,6 +13,10 @@ const messageObject = require('./message_object');
 const beacon = require('./beacon'); 
 const PORT = process.env.PORT || 5000;
 
+// for database
+const sqlite = require('sqlite3').verbose();
+const db = new sqlite.Database('kamakura_tourism.sqlite');  // SQLite の DB ファイル名
+
 const BEACON_ENTER= 'enter';
 const BEACON_LEAVE= 'leave';
 

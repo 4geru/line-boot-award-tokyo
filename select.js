@@ -1,5 +1,5 @@
 const sqlite = require('sqlite3').verbose();
-const db = new sqlite.Database('example.sqlite');
+const db = new sqlite.Database('kamakura_tourism.sqlite');
 
 db.serialize(() => {
   db.each('SELECT * FROM users', (error, row) => {

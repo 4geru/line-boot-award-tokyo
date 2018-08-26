@@ -3,7 +3,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
+    <p><%= item.name %>は<%= item.price %>円で購入することができます。</p>
     <p>決済方法を選択してください</p>
-    <a href="/pay/reserve/1"><img src="/pay_btn.png"></img></a>
+    <a href="/pay/reserve/<%= item.id %>"><img src="/pay_btn.png"></img></a>
 </body>
 </html>

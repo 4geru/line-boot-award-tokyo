@@ -8,8 +8,9 @@ require('dotenv').config();
 const clova = require('./clova'); 
 const intro = require('./intro');
 const items = require('./items');
-//const pay = require('./line-pay'); 
+const pay = require('./line-pay'); 
 const messageObject = require('./message_object'); 
+const item_server = require('./items_server'); 
 const beacon = require('./beacon'); 
 const PORT = process.env.PORT || 5000;
 
@@ -31,8 +32,11 @@ app.post('/webhook', line.middleware(config), (req, res) => {
 const client = new line.Client(config);
 
 // server起動後にメッセージを投げる
-// const response = client.pushMessage('user_id',
-//   intro.intro
+const response = client.pushMessage('U710c26a12186326e3d3b79924cc98a3a',
+  items.items
+);
+// client.pushMessage('U710c26a12186326e3d3b79924cc98a3a',
+//   {type: 'text',text: 'hoge'}
 // );
 
 client.pushMessage('U48e8438b0b8268ecdbe6b6fcc8ca656e',
@@ -98,8 +102,11 @@ app.set("view engine", "ejs");
 app.get("/", (req, res) => { res.render(__dirname + "/index"); })
 
 // line paynのやつ
-//app.use("/pay/confirm", (req, res) => {pay.confirm(req, res)});
-//app.use("/pay/reserve", (req, res) => {pay.serve(req, res)});
+app.use("/pay/confirm", (req, res) => {pay.confirm(req, res)});
+app.use("/pay/reserve/:item_id", (req, res) => {pay.serve(req, res)});
+
+// お土産のやつ
+app.get('/items/:item_id',item_server.items);
 
 // start server
 app.listen(PORT);

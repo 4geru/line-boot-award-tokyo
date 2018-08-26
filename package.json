@@ -14,7 +14,10 @@
     "@line/clova-cek-sdk-nodejs": "^1.0.1",
     "axios": "^0.18.0",
     "dotenv": "^6.0.0",
+    "ejs": "^2.6.1",
     "express": "^4.16.3",
+    "line-pay": "^1.0.11",
+    "memory-cache": "^0.2.0",
     "sqlite3": "^4.0.2"
   }
 }

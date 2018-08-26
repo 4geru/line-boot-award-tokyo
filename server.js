@@ -47,6 +47,22 @@ const client = new line.Client(config);
 // );
 
 function handleEvent(event) {
+  // resのuseridとDBのuserIdが一致する奴があるか。みるない場合ユーザを作る
+  const userId = event.source.userId;
+  var dbResponse = (userId, callback) => {
+    console.log('called')
+    console.log(userId)
+    db.serialize(function () {
+      db.each("SELECT * FROM users WHERE user_id = ?", [userId], function(err, row) {
+        console.log(row.user_id + ":" + row.count);
+      }, (err, count)=>{
+          if (count == 0){
+            db.run('INSERT INTO users values (?, ?, ?, ?, ?, ?)', [userId, 1, '', '', '']);
+          }
+      });
+    });
+  }
+
   console.log(event.type)
   if (event.type === 'join' || event.type === 'follow') {
     const response = client.replyMessage(event.replyToken,

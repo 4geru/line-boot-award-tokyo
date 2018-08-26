@@ -27,19 +27,17 @@ app.post('/webhook', line.middleware(config), (req, res) => {
 const client = new line.Client(config);
 
 // server起動後にメッセージを投げる
-// response = client.pushMessage('user_id',
-//   {
-//       type: 'text',
-//       text: 'hello'
-//     }
+// const response = client.pushMessage('user_id',
+//   intro.intro
 // );
 
 function handleEvent(event) {
   console.log(event.type)
   if (event.type === 'join' || event.type === 'follow') {
-    return client.pushMessage(event.source.userId,
+    const response = client.replyMessage(event.replyToken,
       intro.intro
       );
+    return Promise.resolve(null);
   }
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);

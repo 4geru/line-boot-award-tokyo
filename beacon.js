@@ -6,7 +6,7 @@ const BEACON_LEAVE= 'leave';
 const BEACON_BUDDHA= '000002b737';
 const BEACON_STATION= '000002b74f';
 
-const is_AM= true
+const is_AM=false
 
 module.exports = {
   beacon: (event) => {
@@ -33,6 +33,7 @@ module.exports = {
             } else{
                 // [TODO] 午後
                 //PMの処理★
+                return client.replyMessage(event.replyToken,[message, items.items]); 
             }
        
 

@@ -20,16 +20,16 @@ db.serialize(() => {
 
   stmt.finalize();
 
-  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, spot_id INTEGER, alert_at TEXT, name TEXT, beacon_id TEXT)');
+  db.run('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY,user_id TEXT, spot_id INTEGER, alert_at TEXT, name TEXT, beacon_id TEXT)');
   // Prepared Statement でデータを挿入する
-  stmt = db.prepare('INSERT INTO users VALUES (?, ?, ?, ?, ?)');
-  stmt.run([1, 1, '18:00', 'しげる', 'beacon_id']);
+  stmt = db.prepare('INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)');
+  stmt.run([1, "Uxxxxxx", 1, '18:00', 'しげる', 'beacon_id']);
 
   stmt.finalize();
 
-  db.run('CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY, name TEXT, price INTEGER, station_id INTEGER)');
+  db.run('CREATE TABLE IF NOT EXISTS items (id INTEGER PRIMARY KEY, name TEXT, price INTEGER, station_id INTEGER, image_url INTEGER)');
   // Prepared Statement でデータを挿入する
-  stmt = db.prepare('INSERT INTO items VALUES (?, ?, ?, ?)');
+  stmt = db.prepare('INSERT INTO items VALUES (?, ?, ?, ?, ?)');
   stmt.run([1, 1, 'お土産', 1]);
 
   stmt.finalize();

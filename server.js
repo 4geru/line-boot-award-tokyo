@@ -9,7 +9,17 @@ const clova = require('./clova');
 const intro = require('./intro');
 const items = require('./items');
 const pay = require('./line-pay'); 
+const messageObject = require('./message_object'); 
+const beacon = require('./beacon'); 
 const PORT = process.env.PORT || 5000;
+
+const BEACON_ENTER= 'enter';
+const BEACON_LEAVE= 'leave';
+
+const BEACON_BUDDHA= '000002b737';
+const BEACON_STATION= '000002b74f';
+
+const is_AM= true
 
 const config = {
     channelSecret: process.env.CHANNEL_SECRET,
@@ -42,6 +52,17 @@ function handleEvent(event) {
   }
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
+  }
+
+  if (event.type == 'beacon' ) {
+      beacon.beacon(event)
+  }
+
+  if (event.type == 'postback') {
+      // [TODO] データを保存し、お知らせする
+      var form_timestamp = event.timestamp 
+      var message = messageObject.messageObject_text(form_timestamp);
+      return client.replyMessage(event.replyToken,message);   
   }
   console.log(event.message.text)
 

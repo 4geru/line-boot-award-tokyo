@@ -6,6 +6,8 @@ require("dotenv").config();
 // Import packages.
 const uuid = require("uuid/v4");
 const cache = require("memory-cache");
+const sqlite = require('sqlite3').verbose();
+const db = new sqlite.Database('kamakura_tourism.sqlite');  // SQLite の DB ファイル名
 
 // Instanticate LINE Pay API SDK.
 const line_pay = require("line-pay");
@@ -24,19 +26,24 @@ module.exports = {
             orderId: uuid(),
             confirmUrl: process.env.LINE_PAY_CONFIRM_URL
         }
+        db.serialize(() => {
+            db.each("SELECT * FROM items WHERE id = ?", [req.params.item_id], function(err, row) {
+              options.productName = row.name;
+              options.amount = row.price
+              payment.reserve(options).then((response) => {
+                let reservation = options;
+                reservation.transactionId = response.info.transactionId;
 
-        payment.reserve(options).then((response) => {
-            let reservation = options;
-            reservation.transactionId = response.info.transactionId;
+                console.log(`Reservation was made. Detail is following.`);
+                console.log(reservation);
 
-            console.log(`Reservation was made. Detail is following.`);
-            console.log(reservation);
+                // Save order information
+                cache.put(reservation.transactionId, reservation);
 
-            // Save order information
-            cache.put(reservation.transactionId, reservation);
-
-            res.redirect(response.info.paymentUrl.web);
-        })
+                res.redirect(response.info.paymentUrl.web);
+              })
+          });
+        });
     },
     confirm: (req, res) => {
 

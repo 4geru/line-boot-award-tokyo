@@ -8,7 +8,8 @@ require('dotenv').config();
 const clova = require('./clova'); 
 const intro = require('./intro');
 const items = require('./items');
-const pay = require('./line-pay'); 
+const pay = require('./line-pay-setting');
+
 const messageObject = require('./message_object'); 
 const item_server = require('./items_server'); 
 const beacon = require('./beacon'); 
@@ -32,22 +33,22 @@ app.post('/webhook', line.middleware(config), (req, res) => {
 const client = new line.Client(config);
 
 // server起動後にメッセージを投げる
-const response = client.pushMessage('U710c26a12186326e3d3b79924cc98a3a',
-  items.items
-);
-// client.pushMessage('U710c26a12186326e3d3b79924cc98a3a',
-//   {type: 'text',text: 'hoge'}
+// const response = client.pushMessage('U5101cb4620877b4e1c3ffb6ab525153b',
+//   items.items
+// );
+// client.pushMessage('U5101cb4620877b4e1c3ffb6ab525153b',
+//   {type: 'text',text: '17:30時です。もうそろそろ帰りの準備をしましょう'}
 // );
 
-client.pushMessage('U48e8438b0b8268ecdbe6b6fcc8ca656e',
-  items.items
-);
+// client.pushMessage('U48e8438b0b8268ecdbe6b6fcc8ca656e',
+//   items.items
+// );
 function handleEvent(event) {
   // resのuseridとDBのuserIdが一致する奴があるか。みるない場合ユーザを作る
   const userId = event.source.userId;
   var dbResponse = (userId, callback) => {
-    console.log('called')
-    console.log(userId)
+    // console.log('called')
+    // console.log(userId)
     db.serialize(function () {
       db.each("SELECT * FROM users WHERE user_id = ?", [userId], function(err, row) {
         console.log(row.user_id + ":" + row.count);
@@ -57,6 +58,7 @@ function handleEvent(event) {
           }
       });
     });
+    db.close();
   }
 
   console.log(event.type)
@@ -70,7 +72,7 @@ function handleEvent(event) {
   if (event.type == 'beacon' ) {
       //beacon.beacon(event)
       var message = beacon.beacon(event)
-          return client.replyMessage(event.replyToken,message); 
+      return client.replyMessage(event.replyToken,message); 
   }
 
   if (event.type == 'postback') {
@@ -85,14 +87,14 @@ function handleEvent(event) {
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
   }
-
+  if (event.message.text == 'お土産'){
+    return client.replyMessage(event.replyToken, items.items);
+  }
   return client.replyMessage(event.replyToken, {
     type: 'text',
     text: event.message.text
   });
 }
-
-console.log(clova)
 
 app.post('/clova', clova.clovaMiddleware, clova.clovaSkillHandler);
 
@@ -103,7 +105,7 @@ app.get("/", (req, res) => { res.render(__dirname + "/index"); })
 
 // line paynのやつ
 app.use("/pay/confirm", (req, res) => {pay.confirm(req, res)});
-app.use("/pay/reserve/:item_id", (req, res) => {pay.serve(req, res)});
+app.use("/pay/reserve/:item_id/:price", (req, res) => {pay.serve(req, res)});
 
 // お土産のやつ
 app.get('/items/:item_id',item_server.items);

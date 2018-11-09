@@ -3,8 +3,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
-    <p><%= item.name %>は<%= item.price %>円で購入することができます。</p>
+    <% items = [
+      {title: "5個入り : 724円", amount: 5, price: 724},
+      {title: "8個入り : 1,166円", amount: 8, price: 1166},
+      {title: "16個入り : 2,333円", amount: 16, price: 2333}
+    ]%>
+
+    <script>
+      const items = <%- JSON.stringify(items) %>
+      console.log(items)
+    </script>
+    <div class="header">
+      <p>鎌倉商店</p>
+    </div>
+    <img src="/kurumicco.jpg"></img>
+    <table>
+      <% items.forEach(function (item, key) { %>
+      <tr>
+        <td><%= item.title %></td>
+        <td>
+          <select name="count-<%= key %>" onChange="changeSelectForm(this.value)">
+            <option value="<%= item.price * 0 %>" selected>0</option>
+            <option value="<%= item.price * 1 %>">1</option>
+            <option value="<%= item.price * 2 %>">2</option>
+            <option value="<%= item.price * 3 %>">3</option>
+            <option value="<%= item.price * 4 %>">4</option>
+            <option value="<%= item.price * 5 %>">5</option>
+          </select>
+          個
+        </td>
+      </tr>
+      <% }); %>
+    </table>
+    <div id="sum-price"><p>合計金額0円です。</p></div>
     <p>決済方法を選択してください</p>
-    <a href="/pay/reserve/<%= item.id %>"><img src="/pay_btn.png"></img></a>
+    <div class="center">
+      <a href="/pay/reserve/<%= item.id %>/0"><img src="/pay_btn.png"></img></a>
+    </div>
+<script>
+
+const changeSelectForm = (e) => {
+  let sum = 0
+  const selects = document.getElementsByTagName('select')
+  for(var i = 0; i < selects.length; i ++) {
+    sum += items[i].price * selects[i].selectedIndex
+  }
+  document.getElementById('sum-price').innerHTML = `<p>合計金額${sum}円です。</p>`
+  document.getElementsByTagName('a')[0].href = `/pay/reserve/<%= item.id %>/${sum}`
+}
+</script>
+<style>
+  .center, table {
+    text-align: center;
+    margin: 0 70px;
+  }
+  p {
+    text-align: center;
+  }
+  td {
+    text-align: left;
+  }
+  html, body, img {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+  .header {
+    padding: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+    background: #1abc9c;
+    color: white;
+    font-size: 20px;
+  }
+</style>
 </body>
 </html>
